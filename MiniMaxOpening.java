@@ -19,11 +19,11 @@ public class MiniMaxOpening {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
             String line;
             MoveGenerator moveGenerator = new MoveGenerator();
-            
+
             while ((line = reader.readLine()) != null) {
                 MorrisBoard board = new MorrisBoard(line);
                 System.out.println(line);
-                ArrayList<MorrisBoard> L  = moveGenerator.GenerateAdd(board)  ;
+                ArrayList<MorrisBoard> L = moveGenerator.GenerateAdd(board);
 
                 writer.write("Input State: " + line + "\n");
                 writer.write("Output State: " + line);

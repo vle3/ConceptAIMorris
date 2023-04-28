@@ -24,8 +24,9 @@ public class MoveGenerator {
             if (isSquareEmpty(b.white, i) && isSquareEmpty(b.black, i)) {
 
                 b.white |= (1L << i);
-                if(checkCloseMillWhite(i, board)) {
-                    //generateRemove(b, L);
+                if (checkCloseMillWhite(i, board)) {
+                    // generateRemove(b, L);
+                    GenerateRemove(board, result);
                 }
                 // System.out.println("Player 1 Can go: ");
                 // for (int j = 0; j < 24; j++) {
@@ -86,18 +87,18 @@ public class MoveGenerator {
         if (isSquareEmpty(tempBoard.white, place) && isSquareEmpty(tempBoard.black, place)) {
             tempBoard.white |= (1L << place);
         }
-        switch(Integer.parseInt(Long.toString(tempBoard.white))){
+        switch (Integer.parseInt(Long.toString(tempBoard.white))) {
             case 7:
             case 56:
             case 73:
-            case 146: 
+            case 146:
             case 292:
             case 448:
             case 3584:
             case 28672:
             case 34880:
-            case 135424: 
-            case 229376: 
+            case 135424:
+            case 229376:
             case 263176:
             case 1056800:
             case 1835008:
@@ -116,18 +117,18 @@ public class MoveGenerator {
         if (isSquareEmpty(tempBoard.white, place) && isSquareEmpty(tempBoard.black, place)) {
             tempBoard.black |= (1L << place);
         }
-        switch(Integer.parseInt(Long.toString(tempBoard.black))){
+        switch (Integer.parseInt(Long.toString(tempBoard.black))) {
             case 7:
             case 56:
             case 73:
-            case 146: 
+            case 146:
             case 292:
             case 448:
             case 3584:
             case 28672:
             case 34880:
-            case 135424: 
-            case 229376: 
+            case 135424:
+            case 229376:
             case 263176:
             case 1056800:
             case 1835008:
@@ -141,29 +142,27 @@ public class MoveGenerator {
         }
     }
 
-    private ArrayList<MorrisBoard> GenerateRemove(MorrisBoard board, ArrayList<MorrisBoard> boardList){
-        var result = new ArrayList<MorrisBoard>();
-        for(int i = 0; i < 24; i++){
-            if(!isSquareEmpty(board.black, i)){
-                if(!checkCloseMillBlack(i, board)){
+    private void GenerateRemove(MorrisBoard board, ArrayList<MorrisBoard> boardList) {
+        int initialNoState = boardList.size();
+        for (int i = 0; i < 24; i++) {
+            if (!isSquareEmpty(board.black, i)) {
+                if (!checkCloseMillBlack(i, board)) {
                     var b = copyFrom(board);
                     long mask = ~(1L << i);
                     b.black &= mask;
-                    result.add(b);
+                    boardList.add(b);
                 }
             }
         }
-        if(result.size() == 0){
-            for(int i = 0 ; i < 24; i++){
-                if(!isSquareEmpty(board.black, i))
-                {
+        if (boardList.size() == initialNoState) {
+            for (int i = 0; i < 24; i++) {
+                if (!isSquareEmpty(board.black, i)) {
                     var b = copyFrom(board);
                     long mask = ~(1L << i);
                     b.black &= mask;
-                    result.add(b);
+                    boardList.add(b);
                 }
             }
         }
-        return result;
     }
 }
