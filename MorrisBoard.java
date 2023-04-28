@@ -14,12 +14,42 @@ public class MorrisBoard {
 
     }
 
-    public MorrisBoard convertInput(String standardInput) {
-        var result = new MorrisBoard();
-        if(standardInput.length() != 24 || !standardInput.matches("[xWB]+")){
+    public MorrisBoard(String standardInput) {
+        //var result = new MorrisBoard();
+        if (standardInput.length() != 24 || !standardInput.matches("[xWB]+")) {
             System.out.println("Input string is not valid ");
+        } else {
+            for (int i = 0 ; i < standardInput.length(); i++){
+                char c = standardInput.charAt(i);
+                if(c == 'W') {
+                    white |= (1L << i);
+                }
+                if(c == 'B') {
+                    black |= (1L << i);
+                }
+            }
         }
-        return result;
+
+        // Print the bitboard representation of the MorrisBoard
+        System.out.println("Player 1 pieces:");
+        for (int i = 0; i < 24; i++) {
+            System.out.print((white >> i) & 1);
+            if ((i + 1) % 3 == 0) {
+                System.out.print(" ");
+            }
+        }
+        System.out.println();
+
+        // Print the bitboard representation of the MorrisBoard
+        System.out.println("Player 2 pieces:");
+        for (int i = 0; i < 24; i++) {
+            System.out.print((black >> i) & 1);
+            if ((i + 1) % 3 == 0) {
+                System.out.print(" ");
+            }
+        }
+        System.out.println();
+        //return result;
     }
 
 }

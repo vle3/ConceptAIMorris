@@ -3,6 +3,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MiniMaxOpening {
     public static void main(String[] args) {
@@ -17,8 +18,14 @@ public class MiniMaxOpening {
         try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
                 BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
             String line;
+            MoveGenerator moveGenerator = new MoveGenerator();
+            
             while ((line = reader.readLine()) != null) {
-                writer.write("Input State: " + line +"\n");
+                MorrisBoard board = new MorrisBoard(line);
+                System.out.println(line);
+                ArrayList<MorrisBoard> L  = moveGenerator.GenerateAdd(board)  ;
+
+                writer.write("Input State: " + line + "\n");
                 writer.write("Output State: " + line);
                 writer.newLine();
                 writer.write("depth: " + depth);
