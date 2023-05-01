@@ -5,7 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MiniMaxOpening {
+public class ABGame {
+    public String miniMaxEst;
 
     public static void main(String[] args) {
         if (args.length != 3) {
@@ -26,15 +27,17 @@ public class MiniMaxOpening {
                 stringToBitboards(line, board);
                 System.out.println(line);
                 board.showBoard(board);
-                ArrayList<MorrisBoard> L = moveGenerator.GenerateMoveOpening(board);
+                ArrayList<MorrisBoard> L = moveGenerator.GenerateMovesMidgameEndgame(board);
                 for (MorrisBoard b : L) {
                     System.out.println("Possible move for white and black: \n ");
                     moveGenerator.showBoard(b);
                 }
-                int miniMaxEst = MiniMaxOpening(board, depth, true);
+                int alpha = Integer.MIN_VALUE;
+                int beta = Integer.MAX_VALUE;
+                int miniMaxEst = ABGame(board, depth, alpha, beta, true, L);
                 System.out.println("MiniMax value: " + miniMaxEst);
 
-                var nextMove = getNextMove(board, L, depth);
+                var nextMove = getNextMove(board, L, depth, alpha, beta);
                 String nextMoveBoard = convertBitBoardToStandardString(nextMove);
                 System.out.println("\n Try next move: " + nextMoveBoard);
                 // System.out.println("\n Try bestmove:" + "\n white: " + testNextMove.white +
@@ -54,12 +57,13 @@ public class MiniMaxOpening {
         }
     }
 
-    public static MorrisBoard getNextMove(MorrisBoard board, ArrayList<MorrisBoard> validMoves, int depth) {
+    public static MorrisBoard getNextMove(MorrisBoard board, ArrayList<MorrisBoard> validMoves, int depth, int alpha,
+            int beta) {
         int bestValue = Integer.MIN_VALUE;
         var moveGenerator = new MoveGenerator();
         MorrisBoard bestMove = null;
         for (var b : validMoves) {
-            int value = MiniMaxOpening(b, depth - 1, false);
+            int value = ABGame(b, depth - 1, alpha, beta, false, validMoves);
             if (value > bestValue) {
                 bestValue = value;
                 bestMove = b;
@@ -74,27 +78,36 @@ public class MiniMaxOpening {
 
     static int staticEvaluated = 0;
 
-    public static int MiniMaxOpening(MorrisBoard board, int depth, boolean maximizingPlayer) {
+    public static int ABGame(MorrisBoard board, int depth, int alpha, int beta, boolean maximizingPlayer,
+            ArrayList<MorrisBoard> L) {
         staticEvaluated = 0;
         if (depth == 0) {
             staticEvaluated += 1;
-            return openingStaticEst(board);
+            return gameStaticEst(board, L);
 
         }
         var moveGenerator = new MoveGenerator();
-        var moveOpeningList = moveGenerator.GenerateMoveOpening(board);
+        var moveGameList = moveGenerator.GenerateMovesMidgameEndgame(board);
         int bestValue;
         if (maximizingPlayer == true) {
             bestValue = Integer.MIN_VALUE;
-            for (MorrisBoard b : moveOpeningList) {
-                int value = MiniMaxOpening(b, depth - 1, false);
+            for (MorrisBoard b : moveGameList) {
+                int value = ABGame(b, depth - 1, alpha, beta, false, L);
                 bestValue = Math.max(bestValue, value);
+                alpha = Math.max(alpha, bestValue);
+                if (beta <= alpha) {
+                    break;
+                }
             }
         } else {
             bestValue = Integer.MAX_VALUE;
-            for (MorrisBoard b : moveOpeningList) {
-                int value = MiniMaxOpening(b, depth - 1, true);
+            for (MorrisBoard b : moveGameList) {
+                int value = ABGame(b, depth - 1, alpha, beta, true, L);
                 bestValue = Math.min(bestValue, value);
+                beta = Math.min(beta, bestValue);
+                if (beta <= alpha) {
+                    break;
+                }
             }
         }
 
@@ -117,8 +130,15 @@ public class MiniMaxOpening {
         return sb.toString();
     }
 
-    public static int openingStaticEst(MorrisBoard board) {
-        return Long.bitCount(board.white) - Long.bitCount(board.black);
+    public static int gameStaticEst(MorrisBoard board, ArrayList<MorrisBoard> L) {
+        if (Long.bitCount(board.black) <= 2)
+            return 10000;
+        else if (Long.bitCount(board.white) <= 2)
+            return -10000;
+        else if (L.size() == 0)
+            return 10000;
+        else
+            return 1000 * (Long.bitCount(board.white) - Long.bitCount(board.black)) - L.size();
     }
 
     public static void stringToBitboards(String input, MorrisBoard board) {

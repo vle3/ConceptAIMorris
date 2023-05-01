@@ -15,25 +15,27 @@ public class MorrisBoard {
     }
 
     public MorrisBoard(String standardInput) {
-        //var result = new MorrisBoard();
+        // var result = new MorrisBoard();
         if (standardInput.length() != 24 || !standardInput.matches("[xWB]+")) {
             System.out.println("Input string is not valid ");
         } else {
-            for (int i = 0 ; i < standardInput.length(); i++){
+            for (int i = 0; i < standardInput.length(); i++) {
                 char c = standardInput.charAt(i);
-                if(c == 'W') {
+                if (c == 'W') {
                     white |= (1L << i);
                 }
-                if(c == 'B') {
+                if (c == 'B') {
                     black |= (1L << i);
                 }
             }
         }
+    }
 
+    public static void showBoard(MorrisBoard board) {
         // Print the bitboard representation of the MorrisBoard
         System.out.println("Player 1 pieces:");
         for (int i = 0; i < 24; i++) {
-            System.out.print((white >> i) & 1);
+            System.out.print((board.white >> i) & 1);
             if ((i + 1) % 3 == 0) {
                 System.out.print(" ");
             }
@@ -43,13 +45,32 @@ public class MorrisBoard {
         // Print the bitboard representation of the MorrisBoard
         System.out.println("Player 2 pieces:");
         for (int i = 0; i < 24; i++) {
-            System.out.print((black >> i) & 1);
+            System.out.print((board.black >> i) & 1);
             if ((i + 1) % 3 == 0) {
                 System.out.print(" ");
             }
         }
         System.out.println();
-        //return result;
+        // return result;
+    }
+
+    public String convertBitBoardToStandardString(MorrisBoard board) {
+        char[][] rows = new char[3][3];
+        for (int i = 0; i < 24; i++) {
+            long mask = 1L << i;
+            if ((board.white & mask) != 0) {
+                rows[i / 8][i % 8 / 3] = 'W';
+            } else if ((board.black & mask) != 0) {
+                rows[i / 8][i % 8 / 3] = 'B';
+            } else {
+                rows[i / 8][i % 8 / 3] = 'x';
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (char[] row : rows) {
+            sb.append(row);
+        }
+        return sb.toString();
     }
 
 }

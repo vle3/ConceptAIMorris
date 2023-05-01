@@ -1,3 +1,0 @@
-Input State: WWWxxxxxxxxxxxxxxxxBxxxx
-Output State: WWWxxxxxxxxxxxxxxxxBxxxx
-depth: 5
